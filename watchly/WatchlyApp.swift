@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct watchlyApp: App {
+struct WatchlyApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
