@@ -8,8 +8,122 @@
 import SwiftUI
 
 struct DiscoverView: View {
+    let movies = MockData.sampleMovies
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading) {
+                    
+                    Text("Trend Movies")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .padding(.horizontal)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        LazyHStack {
+                            ForEach(movies) { movie in
+                                VStack {
+                                    AsyncImage(url: URL(string: movie.posterPath ?? "")) { phase in
+                                        switch phase {
+                                        case .empty:
+                                            ZStack {
+                                                Color.gray.opacity(0.2)
+                                                ProgressView()
+                                            }
+                                            .frame(width: 140, height: 210)
+                                            .cornerRadius(12)
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 140, height: 210) // Yükseklik sabitledik ki hizalar kaymasın
+                                                .cornerRadius(12)
+                                                .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 5)
+                                        case .failure:
+                                            ZStack {
+                                                Color.gray.opacity(0.2)
+                                                Image(systemName: "photo.fill")
+                                                    .foregroundStyle(Color.gray)
+                                            }
+                                            .frame(width: 140, height: 210)
+                                            .cornerRadius(12)
+                                            
+                                        @unknown default:
+                                            EmptyView()
+                                        }
+                                    }
+                                    
+                                    Text(movie.title)
+                                        .font(.caption)
+                                        .fontWeight(.semibold)
+                                        .lineLimit(1)
+                                        .frame(width: 140, alignment: .leading)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    
+                    Text("Popular Movies")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .padding()
+                    
+                    
+                    LazyVGrid(columns: columns, spacing: 20) {
+                        ForEach(movies) { movie in
+                            
+                            VStack {
+                                AsyncImage(url: URL(string: movie.posterPath ?? "")) { phase in
+                                    switch phase {
+                                    case .empty:
+                                        ZStack {
+                                            Color.gray.opacity(0.2)
+                                            ProgressView()
+                                        }
+                                        .frame(width: 180, height: 210)
+                                        .cornerRadius(12)
+                                    
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 180, height: 210)
+                                            .cornerRadius(12)
+                                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 5)
+                                    
+                                    case .failure:
+                                        ZStack {
+                                            Color.gray.opacity(0.2)
+                                            Image(systemName: "photo.fill")
+                                                .foregroundStyle(Color.gray)
+                                        }
+                                        .frame(width: 180, height: 210)
+                                        .cornerRadius(12)
+                                        
+                                    @unknown default:
+                                        EmptyView()
+                                    }
+                                }
+                                
+                                Text(movie.title)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                                    .frame(width: 180, alignment: .leading)
+                            }
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            .navigationTitle("Discover")
+        }
     }
 }
 
