@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Movie: Identifiable, Codable {
+struct Movie: Identifiable, Codable, Hashable {
     let id: Int
     let title: String
     let overview: String
@@ -16,3 +16,4 @@ struct Movie: Identifiable, Codable {
     let voteAverage: Double
     let genreIds: [Int]
 }
+
