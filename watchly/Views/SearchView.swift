@@ -1,5 +1,5 @@
 //
-//  Search.swift
+//  SearchView.swift
 //  watchly
 //
 //  Created by MacBook Pro on 12.07.2026.
@@ -8,39 +8,91 @@
 import SwiftUI
 
 struct SearchView: View {
-    @State private var searchText = ""
-    let allMovies = MockData.sampleMovies
-
-    var filteredMovies: [Movie] {
-        if searchText.isEmpty {
-            return allMovies
-        }
-        return allMovies.filter {
-            $0.title.localizedCaseInsensitiveContains(searchText)
-        }
-    }
+    @StateObject private var viewModel = SearchViewModel()
     
     var body: some View {
         NavigationStack {
-            List(filteredMovies) { movie in
-                NavigationLink(destination: MovieDetailView(movie: movie)) {
-                    HStack{
-                        Text(movie.title)
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                        
-                        Spacer()
-                        
-                        Text("⭐️ \(movie.voteAverage, specifier: "%.1f")")
+            Group {
+                
+                if viewModel.isLoading {
+                    VStack {
+                        ProgressView()
+                            .scaleEffect(1.5)
+                        Text("Aranıyor...")
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 8)
                     }
+                }
+                
+                else if let error = viewModel.errorMessage {
+                    VStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 40))
+                            .foregroundStyle(.red)
+                        Text("Bir Hata Oluştu")
+                            .font(.headline)
+                        Text(error)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                }
+                
+                else if viewModel.searchResults.isEmpty && !viewModel.searchText.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 40))
+                            .foregroundStyle(.gray)
+                        Text("Sonuç bulunamadı")
+                            .font(.headline)
+                        Text("'\(viewModel.searchText)' için eşleşen bir film yok.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                
+                else if viewModel.searchText.isEmpty {
+                    VStack(spacing: 12) {
+                        Image(systemName: "popcorn.fill")
+                            .font(.system(size: 50))
+                            .foregroundStyle(.gray.opacity(0.5))
+                        Text("Film aramak için yazmaya başlayın...")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                
+                else {
+                    List(viewModel.searchResults) { movie in
+                        NavigationLink(destination: MovieDetailView(movie: movie)) {
+                            HStack {
+                                Text(movie.title)
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                
+                                Spacer()
+                                Image(systemName: "star.fill")
+                                    .foregroundStyle(.yellow)
+                                    .font(.caption)
+                                
+                                Text("\(movie.voteAverage, specifier: "%.1f")")
+                                    .font(.subheadline)
+                            }
+                        }
+                    }
+                    .listStyle(.plain)
                 }
             }
             .navigationTitle("Arama")
-            .searchable(text: $searchText, prompt: "Film ara")
+            .searchable(text: $viewModel.searchText, prompt: "Film ara...")
+            .onChange(of: viewModel.searchText) { _, _ in
+                viewModel.onSearchTextChanged()
+            }
         }
     }
 }
-
 
 #Preview {
     SearchView()

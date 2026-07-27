@@ -10,8 +10,7 @@ import SwiftUI
 struct DiscoverView: View {
     @State private var selectedPopularMovie: Movie? = nil
     @State private var selectedTrendMovie: Movie? = nil
-    
-    // ViewModel'i StateObject olarak oluşturduk (Ekranda veri kayıplarını önler)
+
     @StateObject private var viewModel = DiscoverViewModel()
     
     let columns = [
