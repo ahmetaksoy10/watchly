@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class DiscoverVİewModel: ObservableObject {
+final class DiscoverViewModel: ObservableObject {
     @Published var trendingMovies: [Movie] = []
     @Published var popularMovies: [Movie] = []
     @Published var isLoading: Bool = false
