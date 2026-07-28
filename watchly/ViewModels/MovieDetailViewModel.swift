@@ -25,14 +25,13 @@ final class MovieDetailViewModel: ObservableObject {
         }
         
         do {
-            // pass
-            print("\(id) ID'li filmin detayları API'den çekiliyor.")
+            print("\(id) ID'li filmin detayları API'den çekiliyor...")
+            
+            let fetchedMovie = try await TMDBService.shared.fetchMovieDetail(id: id)
+            self.movie = fetchedMovie
         } catch {
             self.errorMessage = error.localizedDescription
-            print("Film detayı çekilirken bir hata oluştu \(error.localizedDescription)")
+            print("Film detayı çekilirken bir hata oluştu: \(error)")
         }
     }
-    
 }
-
-
