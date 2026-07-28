@@ -2,7 +2,7 @@
 
 A SwiftUI-based movie & TV show tracking app that lets users discover trending films, search titles, manage watchlists, rate what they've seen, and view personal stats — all powered by the [TMDB API](https://www.themoviedb.org/).
 
-> **Status:** 🟢 Phase 1 Complete — UI Foundation & Navigation
+> **Status:** 🟢 Phase 2 Complete — Networking & MVVM Architecture
 
 ---
 
@@ -16,10 +16,14 @@ A SwiftUI-based movie & TV show tracking app that lets users discover trending f
 - My List screen with segmented picker (To Watch / Watched) and empty states
 - Profile screen with placeholder user stats
 
-### Phase 2 — Networking *(upcoming)*
+### Phase 2 — Networking & MVVM ✅
 - TMDB API integration with `async/await` and `URLSession`
-- MVVM architecture with dedicated ViewModels
-- Error handling and loading states
+- MVVM architecture with dedicated ViewModels (`DiscoverViewModel`, `SearchViewModel`, `MovieDetailViewModel`)
+- `TMDBService` singleton for centralized API communication
+- Custom `APIError` enum for structured error handling
+- Loading states and error UI in all views
+- Secure API key management via `Secrets.xcconfig`
+- `MovieResponse` model for decoding paginated API responses
 
 ### Phase 3 — Local Storage *(upcoming)*
 - CoreData for watchlist and watched movies persistence
@@ -60,20 +64,27 @@ A SwiftUI-based movie & TV show tracking app that lets users discover trending f
 
 ```
 watchly/
-├── WatchlyApp.swift          # App entry point
+├── WatchlyApp.swift              # App entry point
 ├── ContentView.swift
+├── Secrets.xcconfig              # API key configuration (git-ignored)
 ├── Models/
-│   ├── Movie.swift           # Movie data model (Identifiable, Codable, Hashable)
-│   └── MockData.swift        # Sample movie data for development
+│   ├── Movie.swift               # Movie data model (Identifiable, Codable, Hashable)
+│   ├── MovieResponse.swift       # Paginated API response model
+│   └── MockData.swift            # Sample movie data for development
 ├── Views/
-│   ├── MainTabView.swift     # Root TabView with 4 tabs
-│   ├── DiscoverView.swift    # Trending carousel + popular grid
-│   ├── MovieDetailView.swift # Full movie details
-│   ├── SearchView.swift      # Searchable movie list
-│   ├── MyListView.swift      # Watchlist with segmented picker
-│   └── ProfileView.swift     # User profile & stats
-├── ViewModels/               # (Phase 2)
-└── Services/                 # (Phase 2)
+│   ├── MainTabView.swift         # Root TabView with 4 tabs
+│   ├── DiscoverView.swift        # Trending carousel + popular grid
+│   ├── MovieDetailView.swift     # Full movie details
+│   ├── SearchView.swift          # Searchable movie list
+│   ├── MyListView.swift          # Watchlist with segmented picker
+│   └── ProfileView.swift         # User profile & stats
+├── ViewModels/
+│   ├── DiscoverViewModel.swift   # Trending & popular movies logic
+│   ├── SearchViewModel.swift     # Search query & results logic
+│   └── MovieDetailViewModel.swift # Movie detail fetching logic
+└── Services/
+    ├── TMDBService.swift         # TMDB API network layer
+    └── APIError.swift            # Custom error types
 ```
 
 ---
@@ -83,15 +94,19 @@ watchly/
 ### Prerequisites
 - Xcode 15+
 - iOS 17+
-- A free [TMDB API key](https://www.themoviedb.org/settings/api) (required from Phase 2)
+- A free [TMDB API key](https://www.themoviedb.org/settings/api)
 
 ### Run
 1. Clone the repository
    ```bash
    git clone https://github.com/ahmetaksoy10/watchly.git
    ```
-2. Open `watchly.xcodeproj` in Xcode
-3. Select a simulator or device and hit **Run** (⌘R)
+2. Create a `Secrets.xcconfig` file in the `watchly/` directory:
+   ```
+   TMDB_API_KEY = your_api_key_here
+   ```
+3. Open `watchly.xcodeproj` in Xcode
+4. Select a simulator or device and hit **Run** (⌘R)
 
 ---
 
