@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct MovieDetailView: View {
-    let movie: Movie
-    @State private var isInWatchList = false
-    @State private var isWatched = false
+    @StateObject private var viewModel: MovieDetailViewModel
+    
+    init(movie: Movie) {
+        _viewModel = StateObject(wrappedValue: MovieDetailViewModel(movie: movie))
+    }
     
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                AsyncImage(url: movie.posterURL, scale: 1.0) { phase in
+                AsyncImage(url: viewModel.movie.posterURL, scale: 1.0) { phase in
                     switch phase {
                     case .empty:
                         ProgressView()
@@ -43,7 +45,7 @@ struct MovieDetailView: View {
                 }
                 .padding(.horizontal)
                 
-                Text(movie.title)
+                Text(viewModel.movie.title)
                     .font(.title)
                     .bold()
                     .padding(.horizontal)
@@ -52,11 +54,11 @@ struct MovieDetailView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "star.fill")
                             .foregroundStyle(.yellow)
-                        Text(String(format: "%.1f", movie.voteAverage))
+                        Text(String(format: "%.1f", viewModel.movie.voteAverage))
                             .fontWeight(.semibold)
                     }
                     
-                    if let releaseDate = movie.releaseDate, !releaseDate.isEmpty {
+                    if let releaseDate = viewModel.movie.releaseDate, !releaseDate.isEmpty {
                         HStack(spacing: 4) {
                             Image(systemName: "calendar")
                                 .foregroundStyle(.cyan)
@@ -67,35 +69,35 @@ struct MovieDetailView: View {
                 }
                 .padding(.horizontal)
                 
-                Text(movie.overview)
+                Text(viewModel.movie.overview)
                     .font(.body)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal)
 
                 HStack(spacing: 16) {
                     Button {
-                        isInWatchList.toggle()
+                        viewModel.toggleWatchList()
                     } label: {
-                        Label(isInWatchList ? "In Watchlist" : "Add to Watchlist",
-                              systemImage: isInWatchList ? "bookmark.fill" : "bookmark")
+                        Label(viewModel.isInWatchList ? "In Watchlist" : "Add to Watchlist",
+                              systemImage: viewModel.isInWatchList ? "bookmark.fill" : "bookmark")
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(Color.cyan)
+                            .background(viewModel.isInWatchList ? Color.orange : Color.cyan)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     
                     Button {
-                        isWatched.toggle()
+                        viewModel.toggleWatched()
                     } label: {
-                        Label(isWatched ? "Watched" : "Mark as Watched",
-                              systemImage: isWatched ? "checkmark.circle.fill" : "checkmark.circle")
+                        Label(viewModel.isWatched ? "Watched" : "Mark as Watched",
+                              systemImage: viewModel.isWatched ? "checkmark.circle.fill" : "checkmark.circle")
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 12)
-                            .background(isWatched ? Color.green : Color.cyan)
+                            .background(viewModel.isWatched ? Color.green : Color.cyan)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
@@ -105,7 +107,7 @@ struct MovieDetailView: View {
             }
             .padding(.bottom, 30)
         }
-        .navigationTitle(movie.title)
+        .navigationTitle(viewModel.movie.title)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -123,3 +125,4 @@ struct MovieDetailView: View {
         ))
     }
 }
+

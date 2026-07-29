@@ -67,19 +67,53 @@ struct SearchView: View {
                 else {
                     List(viewModel.searchResults) { movie in
                         NavigationLink(destination: MovieDetailView(movie: movie)) {
-                            HStack {
-                                Text(movie.title)
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
+                            HStack(spacing: 12) {
+                                
+                                AsyncImage(url: movie.posterURL) { phase in
+                                    switch phase {
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 50, height: 75)
+                                            .cornerRadius(8)
+                                    default:
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.gray.opacity(0.2))
+                                            .frame(width: 50, height: 75)
+                                            .overlay(
+                                                Image(systemName: "film")
+                                                    .foregroundStyle(.gray)
+                                            )
+                                    }
+                                }
+                                
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(movie.title)
+                                        .font(.headline)
+                                        .lineLimit(2)
+                                    
+                                    if let releaseDate = movie.releaseDate, !releaseDate.isEmpty {
+                                        Text(String(releaseDate.prefix(4)))
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
                                 
                                 Spacer()
-                                Image(systemName: "star.fill")
-                                    .foregroundStyle(.yellow)
-                                    .font(.caption)
                                 
-                                Text("\(movie.voteAverage, specifier: "%.1f")")
-                                    .font(.subheadline)
+                                
+                                HStack(spacing: 4) {
+                                    Image(systemName: "star.fill")
+                                        .foregroundStyle(.yellow)
+                                        .font(.caption)
+                                    Text("\(movie.voteAverage, specifier: "%.1f")")
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                }
                             }
+                            .padding(.vertical, 4)
                         }
                     }
                     .listStyle(.plain)

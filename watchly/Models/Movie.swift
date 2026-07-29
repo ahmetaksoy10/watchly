@@ -14,7 +14,7 @@ struct Movie: Identifiable, Codable, Hashable {
     let posterPath: String?
     let releaseDate: String?
     let voteAverage: Double
-    let genreIds: [Int]
+    let genreIds: [Int]?
     
     // MARK: - API'den gelen verileri eşleştirmek için CodingKeys
     

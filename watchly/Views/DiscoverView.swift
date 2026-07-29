@@ -10,7 +10,6 @@ import SwiftUI
 struct DiscoverView: View {
     @State private var selectedPopularMovie: Movie? = nil
     @State private var selectedTrendMovie: Movie? = nil
-
     @StateObject private var viewModel = DiscoverViewModel()
     
     let columns = [
@@ -94,35 +93,51 @@ struct DiscoverView: View {
                                             selectedTrendMovie = movie
                                         } label: {
                                             VStack {
-                                                // Doğrudan movie.posterURL'i kullanıyoruz
-                                                AsyncImage(url: movie.posterURL) { phase in
-                                                    switch phase {
-                                                    case .empty:
-                                                        ZStack {
-                                                            Color.gray.opacity(0.2)
-                                                            ProgressView()
-                                                        }
-                                                        .frame(width: 140, height: 210)
-                                                        .cornerRadius(12)
-                                                    case .success(let image):
-                                                        image
-                                                            .resizable()
-                                                            .scaledToFill()
+                                                ZStack(alignment: .bottomTrailing) {
+                                                    AsyncImage(url: movie.posterURL) { phase in
+                                                        switch phase {
+                                                        case .empty:
+                                                            ZStack {
+                                                                Color.gray.opacity(0.2)
+                                                                ProgressView()
+                                                            }
                                                             .frame(width: 140, height: 210)
                                                             .cornerRadius(12)
-                                                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 5)
-                                                    case .failure:
-                                                        ZStack {
-                                                            Color.gray.opacity(0.2)
-                                                            Image(systemName: "photo.fill")
-                                                                .foregroundStyle(Color.gray)
+                                                        case .success(let image):
+                                                            image
+                                                                .resizable()
+                                                                .scaledToFill()
+                                                                .frame(width: 140, height: 210)
+                                                                .cornerRadius(12)
+                                                                .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 5)
+                                                        case .failure:
+                                                            ZStack {
+                                                                Color.gray.opacity(0.2)
+                                                                Image(systemName: "photo.fill")
+                                                                    .foregroundStyle(Color.gray)
+                                                            }
+                                                            .frame(width: 140, height: 210)
+                                                            .cornerRadius(12)
+                                                            
+                                                        @unknown default:
+                                                            EmptyView()
                                                         }
-                                                        .frame(width: 140, height: 210)
-                                                        .cornerRadius(12)
-                                                        
-                                                    @unknown default:
-                                                        EmptyView()
                                                     }
+                                                    
+                                                    
+                                                    HStack(spacing: 3) {
+                                                        Image(systemName: "star.fill")
+                                                            .font(.system(size: 10))
+                                                        Text(String(format: "%.1f", movie.voteAverage))
+                                                            .font(.caption2)
+                                                            .fontWeight(.bold)
+                                                    }
+                                                    .foregroundStyle(.white)
+                                                    .padding(.horizontal, 6)
+                                                    .padding(.vertical, 3)
+                                                    .background(Color.black.opacity(0.7))
+                                                    .cornerRadius(6)
+                                                    .padding(6)
                                                 }
                                                 
                                                 Text(movie.title)
@@ -154,37 +169,53 @@ struct DiscoverView: View {
                                         selectedPopularMovie = movie
                                     } label: {
                                         VStack {
-                                            // Doğrudan movie.posterURL'i kullanıyoruz
-                                            AsyncImage(url: movie.posterURL) { phase in
-                                                switch phase {
-                                                case .empty:
-                                                    ZStack {
-                                                        Color.gray.opacity(0.2)
-                                                        ProgressView()
-                                                    }
-                                                    .frame(width: 180, height: 210)
-                                                    .cornerRadius(12)
-                                                
-                                                case .success(let image):
-                                                    image
-                                                        .resizable()
-                                                        .scaledToFill()
+                
+                                            ZStack(alignment: .bottomTrailing) {
+                                                AsyncImage(url: movie.posterURL) { phase in
+                                                    switch phase {
+                                                    case .empty:
+                                                        ZStack {
+                                                            Color.gray.opacity(0.2)
+                                                            ProgressView()
+                                                        }
                                                         .frame(width: 180, height: 210)
                                                         .cornerRadius(12)
-                                                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 5)
-                                                
-                                                case .failure:
-                                                    ZStack {
-                                                        Color.gray.opacity(0.2)
-                                                        Image(systemName: "photo.fill")
-                                                            .foregroundStyle(Color.gray)
-                                                    }
-                                                    .frame(width: 180, height: 210)
-                                                    .cornerRadius(12)
                                                     
-                                                @unknown default:
-                                                    EmptyView()
+                                                    case .success(let image):
+                                                        image
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                            .frame(width: 180, height: 210)
+                                                            .cornerRadius(12)
+                                                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 5)
+                                                    
+                                                    case .failure:
+                                                        ZStack {
+                                                            Color.gray.opacity(0.2)
+                                                            Image(systemName: "photo.fill")
+                                                                .foregroundStyle(Color.gray)
+                                                        }
+                                                        .frame(width: 180, height: 210)
+                                                        .cornerRadius(12)
+                                                        
+                                                    @unknown default:
+                                                        EmptyView()
+                                                    }
                                                 }
+                                                
+                                                HStack(spacing: 3) {
+                                                    Image(systemName: "star.fill")
+                                                        .font(.system(size: 10))
+                                                    Text(String(format: "%.1f", movie.voteAverage))
+                                                        .font(.caption2)
+                                                        .fontWeight(.bold)
+                                                }
+                                                .foregroundStyle(.white)
+                                                .padding(.horizontal, 6)
+                                                .padding(.vertical, 3)
+                                                .background(Color.black.opacity(0.7))
+                                                .cornerRadius(6)
+                                                .padding(6)
                                             }
                                             
                                             Text(movie.title)

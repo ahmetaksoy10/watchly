@@ -11,27 +11,29 @@ import Combine
 
 @MainActor
 final class MovieDetailViewModel: ObservableObject {
-    @Published var movie: Movie? = nil
+    @Published var movie: Movie
+    @Published var isInWatchList: Bool = false
+    @Published var isWatched: Bool = false
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     
-    func fetchMovieDetail(id: Int) async {
-        
-        isLoading = true
-        errorMessage = nil
-        
-        defer {
-            isLoading = false
-        }
-        
-        do {
-            print("\(id) ID'li filmin detayları API'den çekiliyor...")
-            
-            let fetchedMovie = try await TMDBService.shared.fetchMovieDetail(id: id)
-            self.movie = fetchedMovie
-        } catch {
-            self.errorMessage = error.localizedDescription
-            print("Film detayı çekilirken bir hata oluştu: \(error)")
-        }
+    init(movie: Movie) {
+        self.movie = movie
+    }
+    
+    
+    func toggleWatchList() {
+        isInWatchList.toggle()
+        print(isInWatchList
+              ? "'\(movie.title)' izleme listesine eklendi."
+              : "'\(movie.title)' izleme listesinden çıkarıldı.")
+    }
+    
+    func toggleWatched() {
+        isWatched.toggle()
+        print(isWatched
+              ? "'\(movie.title)' izlendi olarak işaretlendi."
+              : "'\(movie.title)' izlenmedi olarak işaretlendi.")
     }
 }
+
